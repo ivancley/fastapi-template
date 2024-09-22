@@ -8,6 +8,7 @@ from app.v1.auth.models import UsuarioCreateModel, UsuarioDB
 DATABASE_URL = config("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
