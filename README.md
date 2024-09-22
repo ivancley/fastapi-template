@@ -52,11 +52,11 @@ fastapi dev main.py
 ```
 
 ### Endpoints Principais
-####Autenticação
+#### Autenticação
 **POST** /v1/login: Autentica o usuário utilizando email e senha e retorna um token JWT.
-####Usuários
+#### Usuários
 **POST** /v1/usuarios/novo/: Cria um novo usuário.
 **GET** /v1/usuarios/eu/: Retorna as informações do usuário autenticado.
 
-###Contribuindo
+### Contribuindo
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
