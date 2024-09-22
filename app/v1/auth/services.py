@@ -2,9 +2,8 @@ from sqlalchemy.orm import Session
 from decouple import config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from app.auth.security import verify_password, get_password_hash
-from app.auth.models import UsuarioCreateModel
-from app.models.usuario import UsuarioDB
+from app.v1.auth.security import verify_password, get_password_hash
+from app.v1.auth.models import UsuarioCreateModel, UsuarioDB
 
 DATABASE_URL = config("DATABASE_URL")
 
@@ -18,28 +17,28 @@ def get_db():
     finally:
         db.close()
 
-def get_user_by_nome(db: Session, username: str):
-    return db.query(UsuarioDB).filter(UsuarioDB.nome == username).first()
+def get_user_by_nome(db: Session, nome: str):
+    return db.query(UsuarioDB).filter(UsuarioDB.nome == nome).first()
 
 def get_usuario_by_email(db: Session, email: str):
     return db.query(UsuarioDB).filter(UsuarioDB.email == email).first()
 
-def create_user(db: Session, user: UsuarioCreateModel):
-    hashed_password = get_password_hash(user.password)
-    db_user = UsuarioDB(
-        username=user.username,
-        email=user.email,
-        full_name=user.full_name,
+def create_user(db: Session, usuario: UsuarioCreateModel):
+    hashed_password = get_password_hash(usuario.password)
+    db_usuario = UsuarioDB(
+        nome=usuario.nome,
+        email=usuario.email,
+        sobrenome=usuario.sobrenome,
         hashed_password=hashed_password,
         disabled=False
     )
-    db.add(db_user)
+    db.add(db_usuario)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_usuario)
+    return db_usuario
 
 def authenticate_user(db: Session, username: str, password: str):
-    user = get_user_by_nome(db, username)
+    user = get_usuario_by_email(db, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

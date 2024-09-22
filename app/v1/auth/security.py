@@ -8,8 +8,7 @@ from jwt import PyJWTError
 from decouple import config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from app.auth.models import TokenModel, TokenDataModel
-from app.models.usuario import UsuarioDB
+from app.v1.auth.models import UsuarioDB, TokenModel, TokenDataModel
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -52,7 +51,7 @@ async def get_current_user(
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Credenciais inválidas",
         headers={"WWW-Authenticate": "Bearer"},
     )
     
@@ -61,7 +60,7 @@ async def get_current_user(
         username: str = payload.get("sub")  
         if username is None:
             raise credentials_exception
-        token_data = TokenDataModel(username=username)
+        token_data = TokenDataModel(nome=username)
     except PyJWTError:
         raise credentials_exception
 

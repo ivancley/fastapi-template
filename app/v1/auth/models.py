@@ -1,3 +1,4 @@
+from pydantic import BaseModel, EmailStr
 from sqlalchemy import Column, String, Boolean, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timezone
@@ -26,3 +27,25 @@ class UsuarioDB(Base):
         onupdate=lambda: datetime.now(timezone.utc), 
         nullable=False
     )
+
+
+class UsuarioCreateModel(BaseModel):
+    nome: str
+    email: EmailStr | None = None
+    sobrenome: str | None = None
+    password: str
+
+
+class UsuarioViewModel(BaseModel):
+    nome: str
+    email: EmailStr | None = None
+    sobrenome: str | None = None
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenDataModel(BaseModel):
+    nome: str | None = None
