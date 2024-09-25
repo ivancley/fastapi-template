@@ -8,24 +8,25 @@ from app.v1.auth.services import (
     authenticate_user,
     create_user,
     get_db,
-    valida_create_user
+    valida_create_user,
 )
 from app.v1.auth.security import create_access_token, get_current_user
 from app.v1.auth.models import (
-    UsuarioDB, 
-    UsuarioCreateModel, 
-    UsuarioViewModel, 
-    TokenModel
+    UsuarioDB,
+    UsuarioCreateModel,
+    UsuarioViewModel,
+    TokenModel,
 )
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(config("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 router = APIRouter()
 
+
 @router.post("/login", response_model=TokenModel)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> TokenModel:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -41,13 +42,14 @@ async def login_for_access_token(
     return TokenModel(access_token=access_token, token_type="bearer")
 
 
-@router.post("/usuarios/novo/", response_model=UsuarioViewModel)
-async def create_new_user(
-    usuario: UsuarioCreateModel, 
-    db: Session = Depends(get_db)
-):
+@router.post(
+    "/usuarios/novo/",
+    response_model=UsuarioViewModel,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_new_user(usuario: UsuarioCreateModel, db: Session = Depends(get_db)):
     error = valida_create_user(db, usuario)
-    if error: 
+    if error:
         raise HTTPException(status_code=400, detail=error)
 
     return create_user(db=db, usuario=usuario)
