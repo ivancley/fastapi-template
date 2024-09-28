@@ -13,6 +13,7 @@ from app.v1.auth.models import (
     UsuarioViewModel,
     TokenModel,
 )
+from app.v1.auth.permissions import PermissionRequired
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(config("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
@@ -42,6 +43,7 @@ async def login_for_access_token(
     "/usuarios/novo/",
     response_model=UsuarioViewModel,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(PermissionRequired('create_user'))]
 )
 async def create_new_user(usuario: UsuarioCreateModel, db: Session = Depends(get_db)):
     error = AuthSecurity().valida_create_user(db, usuario)

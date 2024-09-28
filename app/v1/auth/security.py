@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jwt import PyJWTError
-from typing import Annotated
+from typing import Annotated, List
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -92,3 +92,14 @@ class AuthSecurity:
         if db_email:
             resp="E-mail já cadastrado"
         return resp
+
+    def get_user_permissions(self, user: UsuarioDB) -> List[str]:
+        permissions = set()
+        for role in user.roles:
+            for permission in role.permissions:
+                permissions.add(permission.name)
+        return list(permissions)
+
+    def has_permission(self, user: UsuarioDB, permission: str) -> bool:
+        user_permissions = self.get_user_permissions(user)
+        return permission in user_permissions
