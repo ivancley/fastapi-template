@@ -19,7 +19,7 @@ Base = declarative_base()
 user_roles = Table(
     'user_roles',
     Base.metadata,
-    Column('user_id', Integer, ForeignKey('usuarios.id'), primary_key=True),
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
     Column('role_id', Integer, ForeignKey('roles.id'), primary_key=True)
 )
 
@@ -31,7 +31,7 @@ role_permissions = Table(
 )
 
 class UsuarioDB(Base):
-    __tablename__ = "usuarios"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=True)
@@ -83,18 +83,24 @@ class UsuarioCreateModel(BaseModel):
     sobrenome: str | None = None
     password: str
 
+class RoleViewModel(BaseModel):
+    id: int
+    name: str
+    description: str | None = None
+
 
 class UsuarioViewModel(BaseModel):
     nome: str
     email: EmailStr | None = None
     sobrenome: str | None = None
-    roles: list[str] | None = []
+    roles: list[RoleViewModel] | None = []
 
 
 class RoleCreateModel(BaseModel):
     name: str
     description: str | None = None
     permissions: list[str] = []
+
 
 
 class PermissionCreateModel(BaseModel):

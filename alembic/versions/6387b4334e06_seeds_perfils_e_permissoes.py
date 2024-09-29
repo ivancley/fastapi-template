@@ -1,8 +1,8 @@
-"""seed roles e permissions
+"""seeds perfils e permissoes
 
-Revision ID: 783f56bbfd07
-Revises: 80e5eb347b06
-Create Date: 2024-09-28 09:22:29.873692
+Revision ID: 6387b4334e06
+Revises: 8d269a0c1b93
+Create Date: 2024-09-28 18:45:16.264825
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '783f56bbfd07'
-down_revision: Union[str, None] = '80e5eb347b06'
+revision: str = '6387b4334e06'
+down_revision: Union[str, None] = '8d269a0c1b93'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

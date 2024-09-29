@@ -8,7 +8,12 @@ from typing import Annotated, List
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from app.v1.auth.models import UsuarioDB, UsuarioCreateModel, TokenDataModel
+from app.v1.auth.models import (
+    UsuarioDB,
+    UsuarioCreateModel,
+    TokenDataModel,
+    UsuarioViewModel,
+)
 from app.v1.utils.db_services import get_db
 
 SECRET_KEY = config("SECRET_KEY")
@@ -36,8 +41,8 @@ class AuthSecurity:
     async def get_current_user(
         self,
         token: Annotated[str, Depends(oauth2_scheme)],
-        db: Session = Depends(get_db)
-    ):
+        db: Session = Depends(get_db),
+    ) -> UsuarioViewModel:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciais inválidas",
@@ -70,7 +75,7 @@ class AuthSecurity:
             email=usuario.email,
             sobrenome=usuario.sobrenome,
             hashed_password=hashed_password,
-            disabled=False
+            disabled=False,
         )
         db.add(db_usuario)
         db.commit()
@@ -85,12 +90,11 @@ class AuthSecurity:
             return False
         return user
 
-
     def valida_create_user(self, db: Session, user: UsuarioCreateModel):
         resp = None
         db_email = self.get_usuario_by_email(db, user.email)
         if db_email:
-            resp="E-mail já cadastrado"
+            resp = "E-mail já cadastrado"
         return resp
 
     def get_user_permissions(self, user: UsuarioDB) -> List[str]:
