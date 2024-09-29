@@ -76,8 +76,8 @@ def upgrade() -> None:
 def downgrade() -> None:
     conn = op.get_bind()
 
-    admin_user_id = conn.execute(sa.text("SELECT id FROM users WHERE username = 'admin'")).fetchone()[0]
-    usuario_user_id = conn.execute(sa.text("SELECT id FROM users WHERE username = 'usuario'")).fetchone()[0]
+    admin_user_id = conn.execute(sa.text("SELECT id FROM users WHERE nome = 'admin'")).fetchone()[0]
+    usuario_user_id = conn.execute(sa.text("SELECT id FROM users WHERE nome = 'usuario'")).fetchone()[0]
 
     op.execute(f"DELETE FROM user_roles WHERE user_id IN ({admin_user_id}, {usuario_user_id})")
     op.execute(f"DELETE FROM users WHERE id IN ({admin_user_id}, {usuario_user_id})")

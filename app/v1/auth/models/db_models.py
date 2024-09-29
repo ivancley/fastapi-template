@@ -30,7 +30,7 @@ role_permissions = Table(
     Column('permission_id', Integer, ForeignKey('permissions.id'), primary_key=True)
 )
 
-class UsuarioDB(Base):
+class UserDB(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -52,66 +52,27 @@ class UsuarioDB(Base):
         nullable=False
     )
 
-    roles = relationship('Role', secondary=user_roles, back_populates='users')
+    roles = relationship('RoleDB', secondary=user_roles, back_populates='users')
 
 
-class Role(Base):
+class RoleDB(Base):
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True, nullable=False)
     description = Column(String, nullable=True)
 
-    users = relationship('UsuarioDB', secondary=user_roles, back_populates='roles')
-    permissions = relationship('Permission', secondary=role_permissions, back_populates='roles')
+    users = relationship('UserDB', secondary=user_roles, back_populates='roles')
+    permissions = relationship('PermissionDB', secondary=role_permissions, back_populates='roles')
 
 
-class Permission(Base):
+class PermissionDB(Base):
     __tablename__ = "permissions"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True, nullable=False)
     description = Column(String, nullable=True)
 
-    roles = relationship('Role', secondary=role_permissions, back_populates='permissions')
+    roles = relationship('RoleDB', secondary=role_permissions, back_populates='permissions')
 
 
-
-class UsuarioCreateModel(BaseModel):
-    nome: str
-    email: EmailStr | None = None
-    sobrenome: str | None = None
-    password: str
-
-class RoleViewModel(BaseModel):
-    id: int
-    name: str
-    description: str | None = None
-
-
-class UsuarioViewModel(BaseModel):
-    nome: str
-    email: EmailStr | None = None
-    sobrenome: str | None = None
-    roles: list[RoleViewModel] | None = []
-
-
-class RoleCreateModel(BaseModel):
-    name: str
-    description: str | None = None
-    permissions: list[str] = []
-
-
-
-class PermissionCreateModel(BaseModel):
-    name: str
-    description: str | None = None
-
-
-class TokenModel(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-
-
-class TokenDataModel(BaseModel):
-    nome: str | None = None

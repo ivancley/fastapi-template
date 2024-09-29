@@ -21,7 +21,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 #target_metadata = None
-from app.v1.auth.models import Base as UserBase
+from app.v1.auth.models.db_models import Base as UserBase
 from app.v1.pacientes.models import Base as PacienteBase
 
 target_metadata = [UserBase.metadata, PacienteBase.metadata, ]

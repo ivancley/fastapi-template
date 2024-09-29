@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from app.v1.auth.controller import router as routerAuth
+from app.v1.auth.controllers.auth_controller import router as routerAuth
 from app.v1.pacientes.controller import router as routerPacientes
-from app.v1.auth.controller_permissions import router as routerPermissions
-from app.v1.auth.controller_roles_permissions import router as routerRoles
+from app.v1.auth.controllers.roles_permissions_controller import router as routerRoles
+from app.v1.auth.controllers.permissions_controller import router as routerPermissions
 
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse

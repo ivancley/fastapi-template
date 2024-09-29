@@ -6,14 +6,11 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 
 from app.v1.utils.db_services import get_db
-from app.v1.auth.security import AuthSecurity
-from app.v1.auth.models import (
-    UsuarioDB,
-    UsuarioCreateModel,
-    UsuarioViewModel,
-    TokenModel,
-)
+from app.v1.auth.models.db_models import UserDB
+from app.v1.auth.models.token_model import TokenModel
+from app.v1.auth.models.user_model import UserCreateModel, UserViewModel
 from app.v1.auth.permissions import PermissionRequired
+from app.v1.auth.security import AuthSecurity
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(config("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
@@ -41,11 +38,11 @@ async def login_for_access_token(
 
 @router.post(
     "/usuarios/novo/",
-    response_model=UsuarioViewModel,
+    response_model=UserViewModel,
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(PermissionRequired('create_user'))]
 )
-async def create_new_user(usuario: UsuarioCreateModel, db: Session = Depends(get_db)):
+async def create_new_user(usuario: UserCreateModel, db: Session = Depends(get_db)):
     error = AuthSecurity().valida_create_user(db, usuario)
     if error:
         raise HTTPException(status_code=400, detail=error)
@@ -53,8 +50,8 @@ async def create_new_user(usuario: UsuarioCreateModel, db: Session = Depends(get
     return AuthSecurity().create_user(db=db, usuario=usuario)
 
 
-@router.get("/usuarios/eu/", response_model=UsuarioViewModel)
+@router.get("/usuarios/eu/", response_model=UserViewModel)
 async def read_users_me(
-    current_user: Annotated[UsuarioDB, Depends(AuthSecurity().get_current_user)],
+    current_user: Annotated[UserDB, Depends(AuthSecurity().get_current_user)],
 ):
     return current_user

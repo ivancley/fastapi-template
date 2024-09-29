@@ -5,7 +5,7 @@ from app.v1.pacientes.models import PacienteCreateModel, PacienteViewModel
 from app.v1.pacientes.services import paciente_services as service
 from app.v1.utils.db_services import get_db
 from app.v1.auth.security import AuthSecurity
-from app.v1.auth.models import UsuarioDB
+from app.v1.auth.models.db_models import UserDB
 
 
 router = APIRouter()
@@ -23,7 +23,7 @@ exception_paciente_nao_encontado = HTTPException(
 def create_paciente(
     paciente: PacienteCreateModel,
     db: Session = Depends(get_db),
-    current_user: UsuarioDB = Depends(AuthSecurity().get_current_user)
+    current_user: UserDB = Depends(AuthSecurity().get_current_user)
 ):
     db_paciente = service.get_paciente_email(db, paciente.email)
     if db_paciente:
@@ -36,7 +36,7 @@ def create_paciente(
 @router.get("/", response_model=List[PacienteViewModel])
 def get_pacientes(
     db: Session = Depends(get_db),
-    current_user: UsuarioDB = Depends(AuthSecurity().get_current_user)
+    current_user: UserDB = Depends(AuthSecurity().get_current_user)
 ):
     return service.get_all(db)
 
@@ -45,7 +45,7 @@ def get_pacientes(
 def get_pacientes_by_id(
     paciente_id: int,
     db: Session = Depends(get_db),
-    current_user: UsuarioDB = Depends(AuthSecurity().get_current_user)
+    current_user: UserDB = Depends(AuthSecurity().get_current_user)
 ):
     paciente = service.get_by_id(db, paciente_id)
     if not paciente:
@@ -59,7 +59,7 @@ def update_pacientes(
     paciente_id: int,
     updated_paciente: PacienteCreateModel,
     db: Session = Depends(get_db),
-    current_user: UsuarioDB = Depends(AuthSecurity().get_current_user)
+    current_user: UserDB = Depends(AuthSecurity().get_current_user)
 ):
     db_paciente = service.get_by_id(db, paciente_id)
     if not db_paciente:
@@ -73,7 +73,7 @@ def update_pacientes(
 def del_delete_paciente(
     paciente_id: int,
     db: Session = Depends(get_db),
-    current_user: UsuarioDB = Depends(AuthSecurity().get_current_user)
+    current_user: UserDB = Depends(AuthSecurity().get_current_user)
 ):
     db_paciente = service.get_by_id(db, paciente_id)
     if not db_paciente:

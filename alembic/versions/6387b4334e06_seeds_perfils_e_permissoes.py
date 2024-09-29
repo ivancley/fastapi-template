@@ -30,6 +30,10 @@ def upgrade() -> None:
             {'name': 'permission_create', 'description': 'Criar permissões'},
             {'name': 'permission_update', 'description': 'Atualizar a permissões'},
             {'name': 'permission_delete', 'description': 'Deletar a permissões'},
+            {'name': 'role_list', 'description': 'Listar perfis'},
+            {'name': 'role_create', 'description': 'Criar perfis'},
+            {'name': 'role_update', 'description': 'Atualizar a perfis'},
+            {'name': 'role_delete', 'description': 'Deletar a perfis'},
             {'name': 'read_me', 'description': 'Ler minhas informações'},
             {'name': 'paciente_list', 'description': 'Listar pacientes'},
             {'name': 'paciente_create', 'description': 'Criar pacientes'},
@@ -52,7 +56,8 @@ def upgrade() -> None:
     )
 
     superuser_permissions = [
-        'permission_list', 'permission_create', 'permission_update', 'permission_delete'
+        'permission_list', 'permission_create', 'permission_update', 'permission_delete',
+        'role_list', 'role_create', 'role_update', 'role_delete',
     ]
     for perm in superuser_permissions:
         op.execute(

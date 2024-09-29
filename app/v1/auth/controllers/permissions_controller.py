@@ -3,13 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.v1.utils.db_services import get_db
-from app.v1.auth.models import (
-    Role,
-    Permission,
-    RoleCreateModel,
-    PermissionCreateModel,
-    UsuarioDB,
-)
+from app.v1.auth.models.role_model import RoleCreateModel
+from app.v1.auth.models.db_models import RoleDB, UserDB ,PermissionDB
+from app.v1.auth.models.permission_model import PermissionCreateModel
+
 
 router = APIRouter( tags=["Admin"])
 
@@ -21,11 +18,11 @@ router = APIRouter( tags=["Admin"])
 )
 def create_permission(permission: PermissionCreateModel, db: Session = Depends(get_db)):
     db_permission = (
-        db.query(Permission).filter(Permission.name == permission.name).first()
+        db.query(PermissionDB).filter(PermissionDB.name == permission.name).first()
     )
     if db_permission:
-        raise HTTPException(status_code=400, detail="Permission already exists")
-    new_permission = Permission(
+        raise HTTPException(status_code=400, detail="Permissão já existente")
+    new_permission = PermissionDB(
         name=permission.name, description=permission.description
     )
     db.add(new_permission)
@@ -38,17 +35,17 @@ def create_permission(permission: PermissionCreateModel, db: Session = Depends(g
     "/roles/", response_model=RoleCreateModel, status_code=status.HTTP_201_CREATED
 )
 def create_role(role: RoleCreateModel, db: Session = Depends(get_db)):
-    db_role = db.query(Role).filter(Role.name == role.name).first()
+    db_role = db.query(RoleDB).filter(RoleDB.name == role.name).first()
     if db_role:
         raise HTTPException(status_code=400, detail="Perfil já existe")
 
     permissions = (
-        db.query(Permission).filter(Permission.name.in_(role.permissions)).all()
+        db.query(PermissionDB).filter(PermissionDB.name.in_(role.permissions)).all()
     )
     if len(permissions) != len(role.permissions):
         raise HTTPException(status_code=400, detail="Não existe esse perfil")
 
-    new_role = Role(
+    new_role = RoleDB(
         name=role.name, description=role.description, permissions=permissions
     )
     db.add(new_role)
@@ -59,11 +56,11 @@ def create_role(role: RoleCreateModel, db: Session = Depends(get_db)):
 
 @router.post("/users/{user_id}/roles/", response_model=RoleCreateModel)
 def assign_role_to_user(user_id: int, role_name: str, db: Session = Depends(get_db)):
-    user = db.query(UsuarioDB).filter(UsuarioDB.id == user_id).first()
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    role = db.query(Role).filter(Role.name == role_name).first()
+    role = db.query(RoleDB).filter(RoleDB.name == role_name).first()
     if not role:
         raise HTTPException(status_code=404, detail="Perfil não encontrado")
 
@@ -77,11 +74,11 @@ def assign_role_to_user(user_id: int, role_name: str, db: Session = Depends(get_
 
 @router.get("/roles/", response_model=List[RoleCreateModel])
 def get_roles(db: Session = Depends(get_db)):
-    roles = db.query(Role).all()
+    roles = db.query(RoleDB).all()
     return roles
 
 
 @router.get("/", response_model=List[PermissionCreateModel])
 def get_permissions(db: Session = Depends(get_db)):
-    permissions = db.query(Permission).all()
+    permissions = db.query(PermissionDB).all()
     return permissions
